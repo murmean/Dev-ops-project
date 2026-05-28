@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Value Stream Map - The First Way: Flow</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>Value Stream Map</h1>
+    <p>Topic: The First Way – Flow</p>
+    <p class="subtitle">Visualising a software delivery process from idea to production</p>
+  </header>
+
+  <main>
+    <section class="intro-card">
+      <h2>Project Overview</h2>
+      <p>
+        This practical project visualises the flow of a software feature from the initial idea
+        until it reaches production. The goal is to identify delays, bottlenecks, and improvement
+        opportunities using DevOps principles, especially <strong>The First Way – Flow</strong>.
+      </p>
+    </section>
+
+    <section class="metrics-grid">
+      <div class="metric-card">
+        <h3>Total Process Time</h3>
+        <p id="totalProcessTime">-</p>
+      </div>
+      <div class="metric-card">
+        <h3>Total Waiting Time</h3>
+        <p id="totalWaitingTime">-</p>
+      </div>
+      <div class="metric-card">
+        <h3>Total Lead Time</h3>
+        <p id="totalLeadTime">-</p>
+      </div>
+      <div class="metric-card">
+        <h3>Flow Efficiency</h3>
+        <p id="flowEfficiency">-</p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Software Delivery Value Stream Map</h2>
+      <div class="map-container" id="valueStreamMap"></div>
+    </section>
+
+    <section>
+      <h2>Bottleneck Analysis</h2>
+      <div class="bottleneck-grid" id="bottleneckList"></div>
+    </section>
+
+    <section>
+      <h2>Improvement Plan</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Bottleneck</th>
+              <th>Problem</th>
+              <th>Improvement</th>
+              <th>Expected Impact</th>
+            </tr>
+          </thead>
+          <tbody id="improvementTable"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>DevOps Course Project – Practical Implementation</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
