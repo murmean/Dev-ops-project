@@ -3,63 +3,60 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Value Stream Map - The First Way: Flow</title>
+  <title>Interactive Value Stream Map</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <header>
-    <h1>Value Stream Map</h1>
-    <p>Topic: The First Way – Flow</p>
-    <p class="subtitle">Visualising a software delivery process from idea to production</p>
+  <header class="hero">
+    <p class="eyebrow">DevOps Practical Project</p>
+    <h1>Interactive Value Stream Map</h1>
+    <p class="subtitle">
+      Visualising software delivery flow from idea to production using The First Way: Flow.
+    </p>
   </header>
 
-  <main>
-    <section class="intro-card">
-      <h2>Project Overview</h2>
-      <p>
-        This practical project visualises the flow of a software feature from the initial idea
-        until it reaches production. The goal is to identify delays, bottlenecks, and improvement
-        opportunities using DevOps principles, especially <strong>The First Way – Flow</strong>.
-      </p>
+  <main class="container">
+    <section class="summary-grid">
+      <article class="summary-card">
+        <span>Total Process Time</span>
+        <strong id="totalProcessTime">0 days</strong>
+      </article>
+      <article class="summary-card">
+        <span>Total Waiting Time</span>
+        <strong id="totalWaitingTime">0 days</strong>
+      </article>
+      <article class="summary-card">
+        <span>Total Lead Time</span>
+        <strong id="totalLeadTime">0 days</strong>
+      </article>
+      <article class="summary-card highlight">
+        <span>Flow Efficiency</span>
+        <strong id="flowEfficiency">0%</strong>
+      </article>
     </section>
 
-    <section class="metrics-grid">
-      <div class="metric-card">
-        <h3>Total Process Time</h3>
-        <p id="totalProcessTime">-</p>
+    <section class="toolbar">
+      <div>
+        <h2>Software Delivery Pipeline</h2>
+        <p>Edit titles and numbers live. Drag stages to reorder the flow.</p>
       </div>
-      <div class="metric-card">
-        <h3>Total Waiting Time</h3>
-        <p id="totalWaitingTime">-</p>
-      </div>
-      <div class="metric-card">
-        <h3>Total Lead Time</h3>
-        <p id="totalLeadTime">-</p>
-      </div>
-      <div class="metric-card">
-        <h3>Flow Efficiency</h3>
-        <p id="flowEfficiency">-</p>
-      </div>
+      <button id="addStageBtn">+ Add Stage</button>
     </section>
 
-    <section>
-      <h2>Software Delivery Value Stream Map</h2>
-      <div class="map-container" id="valueStreamMap"></div>
-    </section>
+    <section id="map" class="map" aria-label="Value stream map stages"></section>
 
-    <section>
-      <h2>Bottleneck Analysis</h2>
-      <div class="bottleneck-grid" id="bottleneckList"></div>
-    </section>
+    <section class="analysis">
+      <div class="panel">
+        <h2>Detected Bottlenecks</h2>
+        <ul id="bottleneckList"></ul>
+      </div>
 
-    <section>
-      <h2>Improvement Plan</h2>
-      <div class="table-wrapper">
+      <div class="panel">
+        <h2>Improvement Plan</h2>
         <table>
           <thead>
             <tr>
               <th>Bottleneck</th>
-              <th>Problem</th>
               <th>Improvement</th>
               <th>Expected Impact</th>
             </tr>
@@ -71,7 +68,7 @@
   </main>
 
   <footer>
-    <p>DevOps Course Project – Practical Implementation</p>
+    <p>Built with HTML, CSS and JavaScript.</p>
   </footer>
 
   <script src="script.js"></script>

@@ -1,30 +1,52 @@
-# Value Stream Map – The First Way: Flow
+# Interactive Value Stream Map
 
-## Project Description
+This is a practical DevOps project that visualises a Value Stream Map for a simulated software delivery process.
 
-This practical DevOps project visualises a Value Stream Map for a simulated software delivery process. The process starts with a feature idea and ends when the feature is deployed to production.
+The project is based on **The First Way: Flow**, a DevOps principle focused on improving how work moves from idea to production.
 
-The project is based on **The First Way – Flow**, one of the main DevOps principles. The First Way focuses on improving the flow of work from development to operations and eventually to the customer.
+## Project Goal
 
-The goal of this implementation is to identify delays, bottlenecks, and opportunities for improving delivery speed and flow efficiency.
+The goal of this project is to show how a software feature moves through a delivery pipeline and to identify where delays happen.
 
-## What Problem Does This Project Solve?
+The application helps visualise:
 
-Software teams often spend more time waiting than actually working on a feature. A feature may be delayed by unclear requirements, slow code reviews, manual testing, or manual deployment approvals.
+- process time
+- waiting time
+- total lead time
+- flow efficiency
+- bottlenecks
+- possible improvements
 
-This project makes those delays visible by showing:
+## Features
 
-- each step in the software delivery process;
-- the process time for each step;
-- the waiting time for each step;
-- the total lead time;
-- the flow efficiency;
-- the main bottlenecks;
-- proposed improvements and their expected impact.
+- Interactive Value Stream Map
+- Editable stage titles
+- Editable process time and waiting time
+- Live recalculation of total process time
+- Live recalculation of total waiting time
+- Live recalculation of total lead time
+- Live recalculation of flow efficiency
+- Drag and drop stage reordering
+- Add new stages dynamically
+- Delete stages
+- Automatic bottleneck highlighting
+- Improvement suggestions based on detected bottlenecks
 
-## Software Delivery Process
+## Technologies Used
 
-The simulated process contains the following steps:
+- HTML
+- CSS
+- JavaScript
+
+## How to Run
+
+Open `index.html` in a browser.
+
+No installation is required.
+
+## Example Software Delivery Flow
+
+The default map contains these stages:
 
 1. Idea / Feature Request
 2. Backlog Refinement
@@ -34,108 +56,47 @@ The simulated process contains the following steps:
 6. Deployment Approval
 7. Production Deployment
 
-## Metrics Used
+Each stage has two values:
 
-### Process Time
+- **Process Time**: the time spent actively working
+- **Waiting Time**: the time spent waiting before the next step
 
-Process time is the time during which active work is being done on the feature.
-
-### Waiting Time
-
-Waiting time is the time during which the feature is blocked or waiting for someone or something.
+## Formulas
 
 ### Lead Time
 
-Lead time is the total time needed for the feature to move from idea to production.
-
-Formula:
-
 ```text
-Lead Time = Total Process Time + Total Waiting Time
+Lead Time = Process Time + Waiting Time
 ```
 
 ### Flow Efficiency
-
-Flow efficiency shows how much of the total lead time is actual active work.
-
-Formula:
 
 ```text
 Flow Efficiency = Total Process Time / Total Lead Time × 100
 ```
 
-## Identified Bottlenecks
+## Bottlenecks
 
-### 1. Code Review
+A bottleneck is a stage that slows down the entire delivery process.
 
-Code review has a high waiting time compared to the actual review time. The feature waits in a queue before another developer reviews it.
+In this project, bottlenecks are detected when a stage has more waiting time than process time.
 
-**Improvement:**
+For example, if Code Review has only a few hours of actual work but several days of waiting, it becomes a bottleneck. The application displays all stages with this problem, not only the stage with the highest waiting time.
 
-Introduce review rotation, smaller pull requests, and a 24-hour review policy.
+## Proposed Improvements
 
-**Expected impact:**
+Common improvements include:
 
-Reduce waiting time by approximately 24 hours.
-
-### 2. QA Testing
-
-Manual QA testing creates a delay before release. The feature waits for testers to become available.
-
-**Improvement:**
-
-Add automated regression tests in the CI pipeline and run smoke tests for every pull request.
-
-**Expected impact:**
-
-Reduce waiting time by approximately 16 hours.
-
-### 3. Deployment Approval
-
-Manual deployment approval creates the largest delay in the flow.
-
-**Improvement:**
-
-Use CI/CD gates, automated checks, and manual approval only for high-risk releases.
-
-**Expected impact:**
-
-Reduce waiting time by approximately 32 hours.
-
-## How the Implementation Works
-
-The project is implemented as a simple web application using:
-
-- HTML for the structure;
-- CSS for the layout and visual design;
-- JavaScript for rendering the value stream map and calculating metrics.
-
-The data for the value stream is stored in a JavaScript array. The application calculates total process time, total waiting time, total lead time, and flow efficiency automatically.
-
-Bottlenecks are visually highlighted in red.
-
-## How to Run the Project
-
-1. Clone the repository:
-
-```bash
-git clone https://github.com/your-username/value-stream-map.git
-```
-
-2. Open the project folder:
-
-```bash
-cd value-stream-map
-```
-
-3. Open `index.html` in a browser.
-
-No installation is required.
-
-## Expected Result
-
-The final application displays a visual Value Stream Map from idea to production. It helps explain where delays happen in the software delivery process and how DevOps practices can reduce lead time and improve flow.
+- smaller pull requests
+- rotating code reviewers
+- work in progress limits
+- CI/CD automation
+- automated testing
+- reducing manual approval steps
+- faster feedback loops
 
 ## Conclusion
 
-This project demonstrates how Value Stream Mapping can be used in DevOps to make the software delivery process visible. By identifying bottlenecks such as code review delays, manual QA queues, and deployment approvals, a team can improve flow, reduce lead time, and deliver value to users faster.
+This project demonstrates how Value Stream Mapping can be used to identify inefficiencies in software delivery.
+
+It shows that the biggest delays are often not caused by development work itself, but by waiting time between stages.

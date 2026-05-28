@@ -1,160 +1,232 @@
-const steps = [
-  {
-    name: "Idea / Feature Request",
-    processTime: 1,
-    waitingTime: 16,
-    description: "A new feature request is created by a stakeholder or product owner.",
-    bottleneck: false
-  },
-  {
-    name: "Backlog Refinement",
-    processTime: 2,
-    waitingTime: 24,
-    description: "The team clarifies requirements and prepares the item for development.",
-    bottleneck: false
-  },
-  {
-    name: "Development",
-    processTime: 16,
-    waitingTime: 8,
-    description: "Developers implement the feature and write the initial tests.",
-    bottleneck: false
-  },
-  {
-    name: "Code Review",
-    processTime: 3,
-    waitingTime: 32,
-    description: "The code waits for another developer to review and approve it.",
-    bottleneck: true
-  },
-  {
-    name: "QA Testing",
-    processTime: 8,
-    waitingTime: 24,
-    description: "The QA team validates the feature manually and reports defects if found.",
-    bottleneck: true
-  },
-  {
-    name: "Deployment Approval",
-    processTime: 1,
-    waitingTime: 40,
-    description: "A manager or release owner approves the feature for production deployment.",
-    bottleneck: true
-  },
-  {
-    name: "Production Deployment",
-    processTime: 2,
-    waitingTime: 4,
-    description: "The feature is deployed to the production environment.",
-    bottleneck: false
-  }
+const map = document.getElementById("map");
+const addStageBtn = document.getElementById("addStageBtn");
+const totalProcessTime = document.getElementById("totalProcessTime");
+const totalWaitingTime = document.getElementById("totalWaitingTime");
+const totalLeadTime = document.getElementById("totalLeadTime");
+const flowEfficiency = document.getElementById("flowEfficiency");
+const bottleneckList = document.getElementById("bottleneckList");
+const improvementTable = document.getElementById("improvementTable");
+
+let stages = [
+  { title: "Idea / Feature Request", process: 0.125, waiting: 2 },
+  { title: "Backlog Refinement", process: 0.25, waiting: 3 },
+  { title: "Development", process: 2, waiting: 1 },
+  { title: "Code Review", process: 0.375, waiting: 4 },
+  { title: "QA Testing", process: 1, waiting: 3 },
+  { title: "Deployment Approval", process: 0.125, waiting: 5 },
+  { title: "Production Deployment", process: 0.25, waiting: 0.5 }
 ];
 
-const improvements = [
-  {
-    bottleneck: "Code Review",
-    problem: "The feature waits 32 hours for review, even though the review itself takes only 3 hours.",
-    improvement: "Introduce review rotation, smaller pull requests, and a 24-hour review policy.",
-    impact: "Expected reduction of waiting time by around 24 hours."
-  },
-  {
-    bottleneck: "QA Testing",
-    problem: "Manual testing creates a queue before release and slows down feedback.",
-    improvement: "Add automated regression tests in the CI pipeline and run smoke tests on every pull request.",
-    impact: "Expected reduction of waiting time by around 16 hours."
-  },
-  {
-    bottleneck: "Deployment Approval",
-    problem: "Manual approval creates the largest waiting time in the flow.",
-    improvement: "Use CI/CD gates, automated checks, and approval only for high-risk releases.",
-    impact: "Expected reduction of waiting time by around 32 hours."
-  }
-];
-
-function formatHours(hours) {
-  if (hours < 8) {
-    return `${hours}h`;
-  }
-
-  const days = hours / 8;
-  return `${days.toFixed(days % 1 === 0 ? 0 : 1)} working days`;
+function formatDays(value) {
+  const rounded = Number(value.toFixed(2));
+  return `${rounded} ${rounded === 1 ? "day" : "days"}`;
 }
 
-function calculateMetrics() {
-  const totalProcessTime = steps.reduce((sum, step) => sum + step.processTime, 0);
-  const totalWaitingTime = steps.reduce((sum, step) => sum + step.waitingTime, 0);
-  const totalLeadTime = totalProcessTime + totalWaitingTime;
-  const flowEfficiency = (totalProcessTime / totalLeadTime) * 100;
+function createStageElement(stage, index) {
+  const card = document.createElement("article");
+  card.className = "stage";
+  card.draggable = true;
+  card.dataset.index = index;
 
-  document.getElementById("totalProcessTime").textContent = formatHours(totalProcessTime);
-  document.getElementById("totalWaitingTime").textContent = formatHours(totalWaitingTime);
-  document.getElementById("totalLeadTime").textContent = formatHours(totalLeadTime);
-  document.getElementById("flowEfficiency").textContent = `${flowEfficiency.toFixed(1)}%`;
+  card.innerHTML = `
+    <div class="stage-header">
+      <h3 class="stage-title" contenteditable="true" spellcheck="false">${stage.title}</h3>
+      <button class="delete-btn" type="button">Delete</button>
+    </div>
+
+    <div class="input-group">
+      <label>Process Time (days)</label>
+      <input class="process-input" type="number" min="0" step="0.125" value="${stage.process}">
+    </div>
+
+    <div class="input-group">
+      <label>Waiting Time (days)</label>
+      <input class="waiting-input" type="number" min="0" step="0.125" value="${stage.waiting}">
+    </div>
+
+    <div class="stage-total">Stage Lead Time: <span>${formatDays(stage.process + stage.waiting)}</span></div>
+    <div class="bottleneck-label">Bottleneck: high waiting time</div>
+  `;
+
+  const title = card.querySelector(".stage-title");
+  const processInput = card.querySelector(".process-input");
+  const waitingInput = card.querySelector(".waiting-input");
+  const deleteBtn = card.querySelector(".delete-btn");
+
+  title.addEventListener("input", () => {
+    stages[index].title = title.textContent.trim() || "Untitled Stage";
+    updateCalculations();
+  });
+
+  processInput.addEventListener("input", () => {
+    stages[index].process = Number(processInput.value) || 0;
+    render();
+  });
+
+  waitingInput.addEventListener("input", () => {
+    stages[index].waiting = Number(waitingInput.value) || 0;
+    render();
+  });
+
+  deleteBtn.addEventListener("click", () => {
+    stages.splice(index, 1);
+    render();
+  });
+
+  card.addEventListener("dragstart", () => {
+    card.classList.add("dragging");
+  });
+
+  card.addEventListener("dragend", () => {
+    card.classList.remove("dragging");
+    updateStageOrderFromDom();
+  });
+
+  return card;
 }
 
-function renderValueStreamMap() {
-  const container = document.getElementById("valueStreamMap");
+function render() {
+  map.innerHTML = "";
+  stages.forEach((stage, index) => {
+    map.appendChild(createStageElement(stage, index));
+  });
+  updateCalculations();
+}
 
-  steps.forEach((step, index) => {
-    const wrapper = document.createElement("div");
-    wrapper.className = "step-wrapper";
+function updateCalculations() {
+  const processTotal = stages.reduce((sum, stage) => sum + stage.process, 0);
+  const waitingTotal = stages.reduce((sum, stage) => sum + stage.waiting, 0);
+  const leadTotal = processTotal + waitingTotal;
+  const efficiency = leadTotal === 0 ? 0 : (processTotal / leadTotal) * 100;
 
-    const card = document.createElement("div");
-    card.className = `step-card ${step.bottleneck ? "bottleneck" : ""}`;
+  totalProcessTime.textContent = formatDays(processTotal);
+  totalWaitingTime.textContent = formatDays(waitingTotal);
+  totalLeadTime.textContent = formatDays(leadTotal);
+  flowEfficiency.textContent = `${efficiency.toFixed(1)}%`;
 
-    card.innerHTML = `
-      <h3>${step.name}</h3>
-      <p><strong>Process Time:</strong> ${formatHours(step.processTime)}</p>
-      <p><strong>Waiting Time:</strong> ${formatHours(step.waitingTime)}</p>
-      <p><strong>Total:</strong> ${formatHours(step.processTime + step.waitingTime)}</p>
-      <p>${step.description}</p>
-    `;
+  highlightBottlenecks();
+  renderBottleneckAnalysis();
+}
 
-    wrapper.appendChild(card);
+function getBottlenecks() {
+  if (stages.length === 0) return [];
 
-    if (index < steps.length - 1) {
-      const arrow = document.createElement("div");
-      arrow.className = "arrow";
-      arrow.textContent = "→";
-      wrapper.appendChild(arrow);
-    }
+  // A bottleneck is any stage where waiting time is bigger than active work time.
+  // This shows every problem, not only the stage with the biggest waiting time.
+  return stages.filter(stage => stage.waiting > stage.process && stage.waiting > 0);
+}
 
-    container.appendChild(wrapper);
+function highlightBottlenecks() {
+  const bottlenecks = getBottlenecks();
+
+  document.querySelectorAll(".stage").forEach((card, index) => {
+    card.classList.toggle("bottleneck", bottlenecks.includes(stages[index]));
+
+    const total = stages[index].process + stages[index].waiting;
+    card.querySelector(".stage-total span").textContent = formatDays(total);
   });
 }
 
-function renderBottlenecks() {
-  const container = document.getElementById("bottleneckList");
-  const bottlenecks = steps.filter(step => step.bottleneck);
+function getImprovementSuggestion(stage) {
+  const title = stage.title.toLowerCase();
 
-  bottlenecks.forEach(step => {
-    const card = document.createElement("div");
-    card.className = "bottleneck-card";
-    card.innerHTML = `
-      <h3>${step.name}</h3>
-      <p><strong>Why it is a bottleneck:</strong> This step has high waiting time compared to the actual process time.</p>
-      <p><strong>Waiting Time:</strong> ${formatHours(step.waitingTime)}</p>
-    `;
-    container.appendChild(card);
-  });
+  if (title.includes("review")) {
+    return "Use smaller pull requests, rotating reviewers, and a 24-hour review target.";
+  }
+
+  if (title.includes("qa") || title.includes("test")) {
+    return "Add automated tests, clear acceptance criteria, and earlier testing feedback.";
+  }
+
+  if (title.includes("deploy") || title.includes("approval") || title.includes("release")) {
+    return "Use CI/CD automation, automated checks, and reduce manual approval steps for low-risk changes.";
+  }
+
+  if (title.includes("backlog") || title.includes("refinement")) {
+    return "Improve backlog readiness, define clear requirements, and limit work waiting for clarification.";
+  }
+
+  return "Reduce waiting time through clearer ownership, WIP limits, automation, and faster feedback loops.";
 }
 
-function renderImprovementTable() {
-  const table = document.getElementById("improvementTable");
+function renderBottleneckAnalysis() {
+  const bottlenecks = getBottlenecks();
+  bottleneckList.innerHTML = "";
+  improvementTable.innerHTML = "";
 
-  improvements.forEach(item => {
+  if (bottlenecks.length === 0) {
+    bottleneckList.innerHTML = "<li>No bottlenecks detected. Waiting time is not higher than process time in any stage.</li>";
+    improvementTable.innerHTML = `
+      <tr>
+        <td>None</td>
+        <td>No improvement required.</td>
+        <td>No impact calculated.</td>
+      </tr>
+    `;
+    return;
+  }
+
+  bottlenecks.forEach(stage => {
+    const excessWaiting = stage.waiting - stage.process;
+    const targetWaiting = Math.max(stage.process, 0);
+    const impact = Math.max(stage.waiting - targetWaiting, 0);
+
+    const listItem = document.createElement("li");
+    listItem.textContent = `${stage.title}: waiting time (${formatDays(stage.waiting)}) is higher than process time (${formatDays(stage.process)}).`;
+    bottleneckList.appendChild(listItem);
+
     const row = document.createElement("tr");
     row.innerHTML = `
-      <td>${item.bottleneck}</td>
-      <td>${item.problem}</td>
-      <td>${item.improvement}</td>
-      <td>${item.impact}</td>
+      <td>${stage.title}</td>
+      <td>${getImprovementSuggestion(stage)}</td>
+      <td>Estimated lead time reduction: about ${formatDays(impact)} if waiting time is reduced to the process time level.</td>
     `;
-    table.appendChild(row);
+    improvementTable.appendChild(row);
   });
 }
 
-calculateMetrics();
-renderValueStreamMap();
-renderBottlenecks();
-renderImprovementTable();
+function updateStageOrderFromDom() {
+  const newOrder = [...map.querySelectorAll(".stage")].map(card => stages[Number(card.dataset.index)]);
+  stages = newOrder;
+  render();
+}
+
+map.addEventListener("dragover", event => {
+  event.preventDefault();
+  const dragging = document.querySelector(".dragging");
+  const afterElement = getDragAfterElement(map, event.clientX);
+
+  if (!dragging) return;
+
+  if (afterElement == null) {
+    map.appendChild(dragging);
+  } else {
+    map.insertBefore(dragging, afterElement);
+  }
+});
+
+function getDragAfterElement(container, x) {
+  const draggableElements = [...container.querySelectorAll(".stage:not(.dragging)")];
+
+  return draggableElements.reduce((closest, child) => {
+    const box = child.getBoundingClientRect();
+    const offset = x - box.left - box.width / 2;
+
+    if (offset < 0 && offset > closest.offset) {
+      return { offset, element: child };
+    }
+
+    return closest;
+  }, { offset: Number.NEGATIVE_INFINITY }).element;
+}
+
+addStageBtn.addEventListener("click", () => {
+  stages.push({
+    title: "New Stage",
+    process: 1,
+    waiting: 1
+  });
+  render();
+});
+
+render();
