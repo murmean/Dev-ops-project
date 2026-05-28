@@ -30,6 +30,9 @@ The application helps visualise:
 - Add new stages dynamically
 - Delete stages
 - Automatic bottleneck highlighting
+- Bottleneck severity levels: Moderate, High, and Critical
+- Mini charts for process time vs waiting time inside each stage
+- Stage efficiency calculation
 - Improvement suggestions based on detected bottlenecks
 
 ## Technologies Used
@@ -81,7 +84,24 @@ A bottleneck is a stage that slows down the entire delivery process.
 
 In this project, bottlenecks are detected when a stage has more waiting time than process time.
 
-For example, if Code Review has only a few hours of actual work but several days of waiting, it becomes a bottleneck. The application displays all stages with this problem, not only the stage with the highest waiting time.
+The application displays all stages with this problem, not only the stage with the highest waiting time.
+
+Severity levels are calculated using the ratio between waiting time and process time:
+
+- **Moderate**: waiting time is higher than process time
+- **High**: waiting time is at least 2 times higher than process time
+- **Critical**: waiting time is at least 4 times higher than process time
+
+For example, if Code Review has only a few hours of actual work but several days of waiting, it becomes a Critical bottleneck.
+
+## Mini Charts
+
+Each stage includes a mini chart that compares:
+
+- blue bar: process time
+- red bar: waiting time
+
+This makes it easier to visually understand whether a stage is mostly active work or mostly delay.
 
 ## Proposed Improvements
 

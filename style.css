@@ -117,7 +117,7 @@ button:hover {
 }
 
 .stage {
-  min-width: 250px;
+  min-width: 270px;
   background: white;
   border-radius: 20px;
   padding: 18px;
@@ -132,7 +132,17 @@ button:hover {
   transform: scale(0.98);
 }
 
-.stage.bottleneck {
+.stage.severity-moderate {
+  border-color: #f59e0b;
+  background: #fffbeb;
+}
+
+.stage.severity-high {
+  border-color: #f97316;
+  background: #fff7ed;
+}
+
+.stage.severity-critical {
   border-color: #dc2626;
   background: #fff7f7;
 }
@@ -205,12 +215,77 @@ button:hover {
   font-size: 15px;
 }
 
-.stage-total {
-  margin-top: 14px;
+.mini-chart {
+  margin: 14px 0;
+  padding: 12px;
+  border-radius: 14px;
+  background: #f8fafc;
+  border: 1px solid #e5e7eb;
+}
+
+.chart-labels,
+.chart-values {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 12px;
+  color: #475569;
+}
+
+.chart-row {
+  display: flex;
+  height: 14px;
+  margin: 8px 0;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e5e7eb;
+}
+
+.chart-bar {
+  display: block;
+  min-width: 2px;
+  transition: width 0.2s ease;
+}
+
+.process-bar {
+  background: #2563eb;
+}
+
+.waiting-bar {
+  background: #dc2626;
+}
+
+.stage-total,
+.stage-efficiency,
+.severity-badge {
+  margin-top: 10px;
   padding: 10px;
   border-radius: 12px;
   background: #f1f5f9;
   font-weight: 700;
+}
+
+.stage-efficiency {
+  background: #eef2ff;
+}
+
+.severity-badge {
+  background: #ecfeff;
+}
+
+.severity-moderate .severity-badge {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.severity-high .severity-badge {
+  background: #fed7aa;
+  color: #9a3412;
+}
+
+.severity-critical .severity-badge {
+  background: #fee2e2;
+  color: #991b1b;
 }
 
 .bottleneck-label {
@@ -221,7 +296,9 @@ button:hover {
   font-size: 14px;
 }
 
-.stage.bottleneck .bottleneck-label {
+.stage.severity-moderate .bottleneck-label,
+.stage.severity-high .bottleneck-label,
+.stage.severity-critical .bottleneck-label {
   display: block;
 }
 
@@ -263,6 +340,31 @@ th {
   font-size: 14px;
 }
 
+.table-severity {
+  display: inline-block;
+  margin-top: 5px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.table-moderate .table-severity {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.table-high .table-severity {
+  background: #fed7aa;
+  color: #9a3412;
+}
+
+.table-critical .table-severity {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
 footer {
   text-align: center;
   padding: 24px;
@@ -288,6 +390,6 @@ footer {
   }
 
   .stage {
-    min-width: 230px;
+    min-width: 245px;
   }
 }
